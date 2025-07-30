@@ -20,7 +20,7 @@ const ComplaintScreen = ({ navigation }) => {
     const complaint = { name, contact, issueType, description, location };
 
     try {
-      const response = await fetch('http://10.171.224.225:5000/complaints', { // <-- Replace with your local IP!
+      const response = await fetch('http://10.102.46.225:5000/complaints', { // <-- Replace with your local IP!
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(complaint),

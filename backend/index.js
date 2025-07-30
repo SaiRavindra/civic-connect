@@ -1,12 +1,19 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const cors = require("cors");
+require("dotenv").config();
+
+
+const authRoutes = require("./routes/auth");
+
 const app = express();
 const PORT = 5000;
 const Complaint = require('./models/complaint');
 
+// Middleware
+app.use(cors());
 app.use(express.json());
 
-
-const mongoose = require('mongoose');
 
 // MongoDB connection URI
 const MONGO_URL = 'mongodb://127.0.0.1:27017/civicconnect';
@@ -36,6 +43,7 @@ app.post('/complaints', async (req, res) => {
   }
 });
 
+app.use("/api/auth", authRoutes);
 
 app.get('/', (req, res) => {
   res.send('Backend is running! hello mussi');
