@@ -1,14 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv').config();
 const cors = require("cors");
-require("dotenv").config();
 
 
 const authRoutes = require("./routes/auth");
+const complaintRoutes = require('./routes/complaintRoutes');
 
 const app = express();
 const PORT = 5000;
-const Complaint = require('./models/complaint');
+
 
 // Middleware
 app.use(cors());
@@ -31,17 +32,9 @@ mongoose.connect(MONGO_URL, {
 });
 
 // POST route to receive complaints
-app.post('/complaints', async (req, res) => {
-  try {
-    console.log('Received complaint:', req.body);
-    const complaint = new Complaint(req.body);
-    await complaint.save();
-    res.status(201).json({ message: 'Complaint saved successfully!' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to save complaint' });
-  }
-});
+
+app.use('/complaints', complaintRoutes);
+
 
 app.use("/api/auth", authRoutes);
 

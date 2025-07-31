@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import API from "../utils/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignupScreen = () => {
   const navigation = useNavigation();
@@ -22,9 +23,18 @@ const SignupScreen = () => {
       password,
     });
 
+    const token = response.data.token;
+
     console.log("Signup success:", response.data);
+
+    await AsyncStorage.setItem("token", token); // ✅ store the token
+    console.log("🧠 Token stored after signup:", token);
     // Optionally: navigate to Login or Home, and store token
-    navigation.navigate("Home");
+    navigation.reset({
+    index: 0,
+    routes: [{ name: "Home" }],
+    });
+
   } catch (error) {
     console.error("Signup failed:", error.response?.data || error.message);
   }

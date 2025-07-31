@@ -1,9 +1,41 @@
 // screens/HomeScreen.js
 
-import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import React, { useEffect,useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  TouchableOpacity,
+  BackHandler,       // ✅ Correct spelling
+  ToastAndroid,      // ✅ For Android toast
+} from 'react-native';
+
 
 const HomeScreen = ({ navigation }) => {
+  const backPressCount = useRef(0);
+
+  useEffect(() => {
+    const backAction = () => {
+      if (backPressCount.current === 0) {
+        backPressCount.current += 1;
+        ToastAndroid.show("Press back again to exit", ToastAndroid.SHORT);
+
+        setTimeout(() => {
+          backPressCount.current = 0;
+        }, 2000); // Reset after 2 seconds
+
+        return true; // Prevent default back action
+      } else {
+        BackHandler.exitApp(); // Exit app on second press
+        return true;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+
+    return () => backHandler.remove(); // Clean up
+  }, []);
   return (
     <View style={styles.container}>
       <ImageBackground

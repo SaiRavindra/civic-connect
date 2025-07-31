@@ -1,6 +1,7 @@
 // screens/ComplaintScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
  
 const ComplaintScreen = ({ navigation }) => {
@@ -11,31 +12,70 @@ const ComplaintScreen = ({ navigation }) => {
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
 
+  // const handleSubmit = async () => {
+  //   console.log('')
+  //   if (!name || !contact || !issueType || !description || !location) {
+  //   alert('Please fill in all required fields.');
+  //   return;
+  // }
+  //   const complaint = { name, contact, issueType, description, location };
+
+  //   try {
+  //     const response = await fetch('http://10.102.46.225:5000/complaints', { // <-- Replace with your local IP!
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify(complaint),
+  //     });
+
+  //     if (response.ok) {
+  //       Alert.alert('Success', 'Complaint submitted successfully');
+  //       navigation.goBack();
+  //     } else {
+  //       Alert.alert('Error', 'Failed to submit complaint');
+  //     }
+  //   } catch (error) {
+  //     Alert.alert('Network Error', error.message);
+  //   }
+  // };
   const handleSubmit = async () => {
-    console.log('')
-    if (!name || !contact || !issueType || !description || !location) {
-    alert('Please fill in all required fields.');
+  if (!name || !contact || !issueType || !description || !location) {
+    Alert.alert('Validation Error', 'Please fill in all required fields.');
     return;
   }
-    const complaint = { name, contact, issueType, description, location };
 
-    try {
-      const response = await fetch('http://10.102.46.225:5000/complaints', { // <-- Replace with your local IP!
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(complaint),
-      });
+  const complaint = { name, contact, issueType, description, location };
 
-      if (response.ok) {
-        Alert.alert('Success', 'Complaint submitted successfully');
-        navigation.goBack();
-      } else {
-        Alert.alert('Error', 'Failed to submit complaint');
-      }
-    } catch (error) {
-      Alert.alert('Network Error', error.message);
+  try {
+    const token = await AsyncStorage.getItem('token'); // 👈 where you store token after login
+
+    if (!token) {
+      Alert.alert('Authentication Error', 'User not logged in.');
+      return;
     }
+
+    const response = await fetch('http://10.102.46.225:5000/complaints', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // 👈 important!
+      },
+      body: JSON.stringify(complaint),
+    });
+
+    if (response.ok) {
+      Alert.alert('Success', 'Complaint submitted successfully');
+      navigation.goBack();
+    } else {
+      const errorData = await response.json();
+      console.log('Submission failed:', errorData);
+      Alert.alert('Error', errorData.reason || 'Failed to submit complaint');
+    }
+  } catch (error) {
+    Alert.alert('Network Error', error.message);
+  }
   };
+
+
   return (
         <ScrollView style={styles.container}>
       <View style={styles.headerRow}>
