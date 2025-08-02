@@ -10,13 +10,40 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import API from "../utils/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Checkbox from "expo-checkbox";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const handleLogin = async () => {
+    if (isAdmin) {
+      // 🔒 Hardcoded Admin Credentials
+      const adminAccounts = [
+        { email: "A", password: "a" },
+        { email: "admin2@example.com", password: "admin456" },
+      ];
+
+      const matchedAdmin = adminAccounts.find(
+        (admin) => admin.email === email && admin.password === password
+      );
+
+      if (matchedAdmin) {
+        await AsyncStorage.setItem("admin", "true");
+        alert("✅ Admin login successful");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "AdminDashboard" }],
+        });
+        return;
+      } else {
+        alert("❌ Invalid admin credentials");
+        return;
+      }
+    }
+
     try {
       const response = await API.post("/auth/login", {
         email,
@@ -25,9 +52,13 @@ const LoginScreen = () => {
 
       const token = response.data.token;
       await AsyncStorage.setItem("token", token);
+      await AsyncStorage.removeItem("admin"); // ensure admin flag is cleared
 
       console.log("Login success:", token);
-      navigation.navigate("Home");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      });
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
       alert("Invalid credentials. Please try again.");
@@ -56,6 +87,11 @@ const LoginScreen = () => {
         onChangeText={setPassword}
       />
 
+      <View style={styles.checkboxContainer}>
+        <Checkbox value={isAdmin} onValueChange={setIsAdmin} />
+        <Text style={styles.label}>Login as Admin</Text>
+      </View>
+
       <TouchableOpacity>
         <Text style={styles.forgot}>Forgot Password?</Text>
       </TouchableOpacity>
@@ -70,6 +106,8 @@ const LoginScreen = () => {
     </ScrollView>
   );
 };
+
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -102,6 +140,16 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
   },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 15,
+    color: "#111418",
+    marginLeft: 8,
+  },
   forgot: {
     color: "#5e7387",
     fontSize: 14,
@@ -129,5 +177,3 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
 });
-
-export default LoginScreen;

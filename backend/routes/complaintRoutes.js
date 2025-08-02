@@ -45,4 +45,36 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
+
+// GET all complaints (Admin - No token check)
+router.get("/all", async (req, res) => {
+  try {
+    const complaints = await Complaint.find();
+    return res.status(200).json(complaints);
+  } catch (error) {
+    console.error("Error in GET /complaints/all:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// PUT update complaint status (Admin - No token check)
+router.put('/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    return res.json(updatedComplaint);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update status', reason: err.message });
+  }
+});
+
+
+
 module.exports = router;

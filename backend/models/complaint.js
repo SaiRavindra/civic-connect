@@ -33,6 +33,11 @@ const complaintSchema = new mongoose.Schema({
     ref: 'User',
     required: true, // Optional: add only if every complaint must be linked to a user
   },
+  status: {
+    type: String,
+    enum: ['Pending', 'In Progress', 'Resolved'],
+    default: 'Pending',
+  },
 });
 
 const Complaint = mongoose.model('Complaint', complaintSchema);

@@ -9,6 +9,7 @@ import LoginScreen from "./screens/LoginScreen";
 import SignupScreen from "./screens/SignupScreen"; // Add this line
 import ComplaintHistoryScreen from "./screens/ComplaintHistoryScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AdminDashboardScreen from './screens/AdminDashboardScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ export default function App() {
             options={{ gestureEnabled: false }}
             />
             <Stack.Screen name="Complaint" component={ComplaintScreen} />
+             <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>
