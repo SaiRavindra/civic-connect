@@ -33,8 +33,8 @@ mongoose.connect(MONGO_URL, {
 
 // POST route to receive complaints
 
-app.use('/complaints', complaintRoutes);
-
+// app.use('/complaints', complaintRoutes);
++ app.use("/api/complaints", complaintRoutes);
 
 app.use("/api/auth", authRoutes);
 

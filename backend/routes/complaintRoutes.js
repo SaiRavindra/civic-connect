@@ -31,10 +31,18 @@ router.post('/',authMiddleware, async (req, res) => {
 });
 
 
-// Get all complaints
-router.get('/', async (req, res) => {
-  const complaints = await Complaint.find();
-  res.json(complaints);
+// Get all complaints for the logged-in user
+router.get('/', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    console.log("📥 Fetching complaints for user:", userId);
+
+    const complaints = await Complaint.find({ userId }).sort({ submittedAt: -1 });
+    res.json(complaints);
+  } catch (err) {
+    console.error("❌ Failed to fetch user complaints:", err);
+    res.status(500).json({ error: 'Failed to fetch complaints', reason: err.message });
+  }
 });
 
 module.exports = router;

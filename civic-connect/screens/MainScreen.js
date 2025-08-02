@@ -43,6 +43,10 @@ const MainScreen = ({ navigation }) => {
             <Text style={styles.status}>{complaint.status}</Text>
           </View>
         ))}
+        <TouchableOpacity style={styles.complaintButton}
+        onPress={() => navigation.navigate('ComplaintHistory')}>
+        <Text style={styles.complaintButtonText}>View Complaint History</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );

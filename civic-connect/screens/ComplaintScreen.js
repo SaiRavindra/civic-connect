@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import API from "../utils/api"; // 🔄 Add this import at the top (already in your project)
 
  
 const ComplaintScreen = ({ navigation }) => {
@@ -37,6 +38,44 @@ const ComplaintScreen = ({ navigation }) => {
   //     Alert.alert('Network Error', error.message);
   //   }
   // };
+  // const handleSubmit = async () => {
+  // if (!name || !contact || !issueType || !description || !location) {
+  //   Alert.alert('Validation Error', 'Please fill in all required fields.');
+  //   return;
+  // }
+
+  // const complaint = { name, contact, issueType, description, location };
+
+  // try {
+  //   const token = await AsyncStorage.getItem('token'); // 👈 where you store token after login
+
+  //   if (!token) {
+  //     Alert.alert('Authentication Error', 'User not logged in.');
+  //     return;
+  //   }
+
+  //   const response = await fetch('http://10.102.46.225:5000/complaints', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Authorization: `Bearer ${token}`, // 👈 important!
+  //     },
+  //     body: JSON.stringify(complaint),
+  //   });
+
+  //   if (response.ok) {
+  //     Alert.alert('Success', 'Complaint submitted successfully');
+  //     navigation.goBack();
+  //   } else {
+  //     const errorData = await response.json();
+  //     console.log('Submission failed:', errorData);
+  //     Alert.alert('Error', errorData.reason || 'Failed to submit complaint');
+  //   }
+  // } catch (error) {
+  //   Alert.alert('Network Error', error.message);
+  // }
+  // };
+
   const handleSubmit = async () => {
   if (!name || !contact || !issueType || !description || !location) {
     Alert.alert('Validation Error', 'Please fill in all required fields.');
@@ -46,32 +85,24 @@ const ComplaintScreen = ({ navigation }) => {
   const complaint = { name, contact, issueType, description, location };
 
   try {
-    const token = await AsyncStorage.getItem('token'); // 👈 where you store token after login
+    const token = await AsyncStorage.getItem('token');
 
     if (!token) {
       Alert.alert('Authentication Error', 'User not logged in.');
       return;
     }
 
-    const response = await fetch('http://10.102.46.225:5000/complaints', {
-      method: 'POST',
+    const response = await API.post('/complaints', complaint, {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`, // 👈 important!
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(complaint),
     });
 
-    if (response.ok) {
-      Alert.alert('Success', 'Complaint submitted successfully');
-      navigation.goBack();
-    } else {
-      const errorData = await response.json();
-      console.log('Submission failed:', errorData);
-      Alert.alert('Error', errorData.reason || 'Failed to submit complaint');
-    }
+    Alert.alert('Success', 'Complaint submitted successfully');
+    navigation.goBack();
   } catch (error) {
-    Alert.alert('Network Error', error.message);
+    console.log('❌ Submission failed:', error?.response?.data || error.message);
+    Alert.alert('Error', error?.response?.data?.reason || 'Failed to submit complaint');
   }
   };
 

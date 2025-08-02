@@ -7,7 +7,7 @@ import MainScreen from "./screens/MainScreen";
 import ComplaintScreen from "./screens/ComplaintScreen";
 import LoginScreen from "./screens/LoginScreen"; 
 import SignupScreen from "./screens/SignupScreen"; // Add this line
-
+import ComplaintHistoryScreen from "./screens/ComplaintHistoryScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Stack = createNativeStackNavigator();
@@ -21,6 +21,8 @@ export default function App() {
             <Stack.Screen name="Signup" component={SignupScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="ComplaintHistory" component={ComplaintHistoryScreen} />
+            
             <Stack.Screen
             name="Main"
             component={MainScreen}
