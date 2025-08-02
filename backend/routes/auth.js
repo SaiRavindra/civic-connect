@@ -3,6 +3,8 @@ const router = express.Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require('../middleware/authMiddleware');
+
 
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
@@ -73,6 +75,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 
 module.exports = router;

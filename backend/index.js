@@ -6,6 +6,8 @@ const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
 const complaintRoutes = require('./routes/complaintRoutes');
+const userRoutes = require("./routes/userRoutes");
+
 
 const app = express();
 const PORT = 5000;
@@ -37,6 +39,8 @@ mongoose.connect(MONGO_URL, {
 + app.use("/api/complaints", complaintRoutes);
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api", userRoutes);
 
 app.get('/', (req, res) => {
   res.send('Backend is running! hello mussi');
