@@ -18,52 +18,58 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const handleLogin = async () => {
-    if (isAdmin) {
-      // 🔒 Hardcoded Admin Credentials
-      const adminAccounts = [
-        { email: "A", password: "a" },
-        { email: "admin2@example.com", password: "admin456" },
-      ];
+    const handleLogin = async () => {
+      if (isAdmin) {
+        // 🔒 Hardcoded Admin Credentials
+        const adminAccounts = [
+          { email: "A", password: "a" },
+          { email: "admin2@example.com", password: "admin456" },
+        ];
 
-      const matchedAdmin = adminAccounts.find(
-        (admin) => admin.email === email && admin.password === password
-      );
+        const matchedAdmin = adminAccounts.find(
+          (admin) => admin.email === email && admin.password === password
+        );
 
-      if (matchedAdmin) {
-        await AsyncStorage.setItem("admin", "true");
-        alert("✅ Admin login successful");
+        if (matchedAdmin) {
+          await AsyncStorage.setItem("token", "admin-secret-token");
+          // await AsyncStorage.setItem("admin", "true");
+          alert("✅ Admin login successful");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "AdminDashboard" }],
+          });
+          return;
+        } else {
+          alert("❌ Invalid admin credentials");
+          return;
+        }
+      }
+
+      
+      try {
+        const response = await API.post("/auth/login", {
+          email,
+          password,
+        });
+
+        const token = response.data.token;
+        await AsyncStorage.setItem("token", token);
+        await AsyncStorage.removeItem("admin"); // ensure admin flag is cleared
+        const profileRes = await API.get("/profile", {
+        headers: { Authorization: `Bearer ${response.data.token}` },
+        });
+        await AsyncStorage.setItem("name", profileRes.data.name);
+        await AsyncStorage.setItem("email", profileRes.data.email)
+        console.log("Login success:", token);
         navigation.reset({
           index: 0,
-          routes: [{ name: "AdminDashboard" }],
+          routes: [{ name: "Main" }],
         });
-        return;
-      } else {
-        alert("❌ Invalid admin credentials");
-        return;
+      } catch (error) {
+        console.error("Login failed:", error.response?.data || error.message);
+        alert("Invalid credentials. Please try again.");
       }
-    }
-
-    try {
-      const response = await API.post("/auth/login", {
-        email,
-        password,
-      });
-
-      const token = response.data.token;
-      await AsyncStorage.setItem("token", token);
-      await AsyncStorage.removeItem("admin"); // ensure admin flag is cleared
-
-      console.log("Login success:", token);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Home" }],
-      });
-    } catch (error) {
-      console.error("Login failed:", error.response?.data || error.message);
-      alert("Invalid credentials. Please try again.");
-    }
-  };
+    };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

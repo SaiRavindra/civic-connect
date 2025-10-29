@@ -30,14 +30,14 @@ const SignupScreen = () => {
     await AsyncStorage.setItem("token", token); // ✅ store the token
 
     
-// Then fetch profile using the token
-  const profileRes = await API.get("/profile", {
-  headers: { Authorization: `Bearer ${response.data.token}` },
-  });
+    // Then fetch profile using the token
+      const profileRes = await API.get("/profile", {
+      headers: { Authorization: `Bearer ${response.data.token}` },
+      });
 
-  // Save profile details locally
-  await AsyncStorage.setItem("name", profileRes.data.name);
-  await AsyncStorage.setItem("email", profileRes.data.email);
+    // Save profile details locally
+    await AsyncStorage.setItem("name", profileRes.data.name);
+    await AsyncStorage.setItem("email", profileRes.data.email);
     console.log("🧠 Token stored after signup:", token);
     // Optionally: navigate to Login or Home, and store token
     navigation.reset({

@@ -47,7 +47,7 @@ const HomeScreen = ({ navigation }) => {
       />
       <Text style={styles.heading}>Connecting Citizens with Civic Solutions</Text>
       <Text style={styles.subtext}>Report issues, track progress, and engage with your community.</Text>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Main')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
         <Text style={styles.buttonText}>Get Started</Text>
       </TouchableOpacity>
     </View>

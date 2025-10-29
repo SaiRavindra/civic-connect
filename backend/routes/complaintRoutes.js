@@ -1,9 +1,8 @@
-// routes/complaintRoutes.js
-
 const express = require('express');
 const router = express.Router();
 const Complaint = require('../models/Complaint');
 const authMiddleware = require('../middleware/authMiddleware');
+const { computeSeverity } = require('../utils/severity');
 
 // POST route to submit a complaint
 router.post('/',authMiddleware, async (req, res) => {
@@ -11,14 +10,19 @@ router.post('/',authMiddleware, async (req, res) => {
     console.log("📌 Authenticated user:", req.user);
 
     console.log("✅ complaint route hit"); // 🔍 Add this to check route is hit
-    const { name, contact, issueType, description, location } = req.body;
+    const { name, contact, issueType,ward,description, location } = req.body;
+
+    // Calculate severity based on description and issue type
+    const severity = computeSeverity(description, issueType);
 
     const complaint = new Complaint({
       name,
       contact,
       issueType,
+      ward,
       description,
       location,
+      severity,
       userId: req.user._id  // <-- Use user from auth middleware
     });
     console.log("📝 Complaint to save:", complaint);

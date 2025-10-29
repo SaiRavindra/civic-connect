@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const cors = require("cors");
 
-
+// Import routes
 const authRoutes = require("./routes/auth");
 const complaintRoutes = require('./routes/complaintRoutes');
 const userRoutes = require("./routes/userRoutes");
-
+const insightsRoutes = require('./routes/insightsRoutes');
 
 const app = express();
 const PORT = 5000;
@@ -33,14 +33,13 @@ mongoose.connect(MONGO_URL, {
   console.error('❌ MongoDB connection error:', err);
 });
 
-// POST route to receive complaints
 
-// app.use('/complaints', complaintRoutes);
-+ app.use("/api/complaints", complaintRoutes);
 
+// Mount routes
+app.use("/api/complaints", complaintRoutes);
 app.use("/api/auth", authRoutes);
-
 app.use("/api", userRoutes);
+app.use('/api/insights', insightsRoutes);
 
 app.get('/', (req, res) => {
   res.send('Backend is running! hello mussi');

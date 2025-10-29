@@ -1,172 +1,102 @@
-// screens/ComplaintScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import API from "../utils/api"; // 🔄 Add this import at the top (already in your project)
+import API from "../utils/api";
 
- 
 const ComplaintScreen = ({ navigation }) => {
-
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
   const [issueType, setIssueType] = useState('');
+  const [ward, setWard] = useState('');
   const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
-
-  // const handleSubmit = async () => {
-  //   console.log('')
-  //   if (!name || !contact || !issueType || !description || !location) {
-  //   alert('Please fill in all required fields.');
-  //   return;
-  // }
-  //   const complaint = { name, contact, issueType, description, location };
-
-  //   try {
-  //     const response = await fetch('http://10.102.46.225:5000/complaints', { // <-- Replace with your local IP!
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(complaint),
-  //     });
-
-  //     if (response.ok) {
-  //       Alert.alert('Success', 'Complaint submitted successfully');
-  //       navigation.goBack();
-  //     } else {
-  //       Alert.alert('Error', 'Failed to submit complaint');
-  //     }
-  //   } catch (error) {
-  //     Alert.alert('Network Error', error.message);
-  //   }
-  // };
-  // const handleSubmit = async () => {
-  // if (!name || !contact || !issueType || !description || !location) {
-  //   Alert.alert('Validation Error', 'Please fill in all required fields.');
-  //   return;
-  // }
-
-  // const complaint = { name, contact, issueType, description, location };
-
-  // try {
-  //   const token = await AsyncStorage.getItem('token'); // 👈 where you store token after login
-
-  //   if (!token) {
-  //     Alert.alert('Authentication Error', 'User not logged in.');
-  //     return;
-  //   }
-
-  //   const response = await fetch('http://10.102.46.225:5000/complaints', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       Authorization: `Bearer ${token}`, // 👈 important!
-  //     },
-  //     body: JSON.stringify(complaint),
-  //   });
-
-  //   if (response.ok) {
-  //     Alert.alert('Success', 'Complaint submitted successfully');
-  //     navigation.goBack();
-  //   } else {
-  //     const errorData = await response.json();
-  //     console.log('Submission failed:', errorData);
-  //     Alert.alert('Error', errorData.reason || 'Failed to submit complaint');
-  //   }
-  // } catch (error) {
-  //   Alert.alert('Network Error', error.message);
-  // }
-  // };
+  const [location, setLocation] = useState(''); // ✅ location dropdown state
 
   const handleSubmit = async () => {
-  if (!name || !contact || !issueType || !description || !location) {
-    Alert.alert('Validation Error', 'Please fill in all required fields.');
-    return;
-  }
-
-  const complaint = { name, contact, issueType, description, location };
-
-  try {
-    const token = await AsyncStorage.getItem('token');
-
-    if (!token) {
-      Alert.alert('Authentication Error', 'User not logged in.');
+    if (!name || !contact || !issueType || !ward || !description || !location) {
+      Alert.alert('Validation Error', 'Please fill in all required fields.');
       return;
     }
 
-    const response = await API.post('/complaints', complaint, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const complaint = { name, contact, issueType, ward, description, location };
 
-    Alert.alert('Success', 'Complaint submitted successfully');
-    navigation.goBack();
-  } catch (error) {
-    console.log('❌ Submission failed:', error?.response?.data || error.message);
-    Alert.alert('Error', error?.response?.data?.reason || 'Failed to submit complaint');
-  }
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        Alert.alert('Authentication Error', 'User not logged in.');
+        return;
+      }
+
+      const response = await API.post('/complaints', complaint, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      Alert.alert('✅ Success', 'Complaint submitted successfully');
+      navigation.goBack();
+    } catch (error) {
+      console.log('❌ Submission failed:', error?.response?.data || error.message);
+      Alert.alert('Error', error?.response?.data?.reason || 'Failed to submit complaint');
+    }
   };
 
-
   return (
-        <ScrollView style={styles.container}>
-      <View style={styles.headerRow}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>{'<'} </Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>Raise Complaint</Text>
-      </View>
+    <ScrollView style={styles.container}>
+      <Text style={styles.heading}>Raise Complaint</Text>
 
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your name"
-          value={name}
-          onChangeText={setName}
-        />
-      </View>
+      <Text style={styles.label}>Name</Text>
+      <TextInput style={styles.input} value={name} onChangeText={setName} />
 
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Contact</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your contact"
-          keyboardType="phone-pad"
-          value={contact}
-          onChangeText={setContact}
-        />
-      </View>
+      <Text style={styles.label}>Contact</Text>
+      <TextInput
+        style={styles.input}
+        value={contact}
+        onChangeText={setContact}
+        keyboardType="phone-pad"
+      />
 
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Issue Type</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="e.g., Road, Water"
-          value={issueType}
-          onChangeText={setIssueType}
-        />
-      </View>
+      <Text style={styles.label}>Issue Type</Text>
+      <Picker
+        selectedValue={issueType}
+        onValueChange={setIssueType}
+        style={styles.picker}
+      >
+        <Picker.Item label="Select Issue Type" value="" />
+        <Picker.Item label="Water" value="Water" />
+        <Picker.Item label="Road" value="Road" />
+        <Picker.Item label="Electricity" value="Electricity" />
+      </Picker>
 
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Description</Text>
-        <TextInput
-          style={[styles.input, { minHeight: 100 }]}
-          placeholder="Describe the issue"
-          multiline
-          value={description}
-          onChangeText={setDescription}
-        />
-      </View>
+      <Text style={styles.label}>Ward</Text>
+      <Picker
+        selectedValue={ward}
+        onValueChange={setWard}
+        style={styles.picker}
+      >
+        <Picker.Item label="Select Ward" value="" />
+        <Picker.Item label="Ward 1" value="Ward 1" />
+        <Picker.Item label="Ward 2" value="Ward 2" />
+        <Picker.Item label="Ward 3" value="Ward 3" />
+        <Picker.Item label="Ward 4" value="Ward 4" />
+      </Picker>
 
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Location</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter location"
-          value={location}
-          onChangeText={setLocation}
-        />
-      </View>
+      <Text style={styles.label}>Location</Text>
+      <Picker
+        selectedValue={location}
+        onValueChange={setLocation}
+        style={styles.picker}
+      >
+        <Picker.Item label="Select Location" value="" />
+        <Picker.Item label="Ramnagar" value="Ramnagar" />
+        <Picker.Item label="Srinagar" value="Srinagar" />
+      </Picker>
+
+      <Text style={styles.label}>Description</Text>
+      <TextInput
+        style={[styles.input, { minHeight: 100 }]}
+        multiline
+        value={description}
+        onChangeText={setDescription}
+      />
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
@@ -178,70 +108,18 @@ const ComplaintScreen = ({ navigation }) => {
 export default ComplaintScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#f8fafc',
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-    flex: 1,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  backArrow: {
-    fontSize: 24,
-    color: '#0e141b',
-  },
-  title: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#0e141b',
-    textAlign: 'center',
-    marginRight: 24,
-  },
-  fieldContainer: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    color: '#0e141b',
-    fontWeight: '500',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#e7edf3',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: '#0e141b',
-  },
-  buttonRow: {
-    marginBottom: 16,
-  },
-  uploadButton: {
-    backgroundColor: '#e7edf3',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-  },
-  uploadButtonText: {
-    color: '#0e141b',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
+  container: { flex: 1, padding: 16, backgroundColor: '#f8fafc' },
+  heading: { fontSize: 22, fontWeight: 'bold', marginBottom: 16 },
+  label: { fontSize: 16, marginTop: 12 },
+  input: { backgroundColor: '#e7edf3', borderRadius: 8, padding: 12, fontSize: 16 },
+  picker: { backgroundColor: '#e7edf3', borderRadius: 8, marginTop: 8 },
   submitButton: {
     backgroundColor: '#1672ce',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 20,
   },
-  submitButtonText: {
-    color: '#f8fafc',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+  submitButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
 });
+
