@@ -14,6 +14,24 @@ const KEYWORD_WEIGHTS = {
   },
   electricity: {
     electrocution: 10, fire: 10, sparks: 8, 'no power': 7, 'downed line': 9, 'short circuit': 8, outage: 6
+  },
+  drainage: {
+    clog: 8,
+    blockage: 7,
+    overflow: 6,
+    leak: 5,
+    flooding: 8,
+    choked: 6,
+    smell: 5
+  },
+  garbage: {
+    waste: 7,
+    smell: 6,
+    uncollected: 8,
+    pile: 6,
+    litter: 5,
+    overflowing: 7,
+    stink: 5
   }
 };
 

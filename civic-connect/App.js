@@ -19,6 +19,8 @@ import AdminDashboardChartScreen from './screens/AdminDashboardChartScreen';
 import AdminWardInsightsScreen from "./screens/AdminWardInsightsScreen";
 import WardInsightsScreen from "./screens/WardInsightsScreen";
 import FutureInsightsScreen from "./screens/FutureInsightsScreen";
+import AdminAlertScreen from "./screens/AdminAlertScreen";
+import ManageAlertsScreen from "./screens/ManageAlertsScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -75,6 +77,8 @@ export default function App() {
             <Stack.Screen name="AdminWardInsights" component={AdminWardInsightsScreen} />
             <Stack.Screen name="WardInsights" component={WardInsightsScreen} />
             <Stack.Screen name="FutureInsights" component={FutureInsightsScreen} />
+            <Stack.Screen name="AdminAlert" component={AdminAlertScreen} />
+            <Stack.Screen name="ManageAlerts" component={ManageAlertsScreen} />
 
           </Stack.Navigator>
         </NavigationContainer>

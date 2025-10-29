@@ -8,6 +8,8 @@ const authRoutes = require("./routes/auth");
 const complaintRoutes = require('./routes/complaintRoutes');
 const userRoutes = require("./routes/userRoutes");
 const insightsRoutes = require('./routes/insightsRoutes');
+const alertRoutes = require("./routes/alerts");
+
 
 const app = express();
 const PORT = 5000;
@@ -40,6 +42,8 @@ app.use("/api/complaints", complaintRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api", userRoutes);
 app.use('/api/insights', insightsRoutes);
+app.use("/api/alerts", alertRoutes);
+
 
 app.get('/', (req, res) => {
   res.send('Backend is running! hello mussi');
