@@ -53,7 +53,7 @@ router.get('/', authMiddleware, async (req, res) => {
 // GET all complaints (Admin - No token check)
 router.get("/all", async (req, res) => {
   try {
-    const complaints = await Complaint.find();
+    const complaints = await Complaint.find().sort({ submittedAt: -1 });
     return res.status(200).json(complaints);
   } catch (error) {
     console.error("Error in GET /complaints/all:", error);

@@ -21,6 +21,8 @@ import WardInsightsScreen from "./screens/WardInsightsScreen";
 import FutureInsightsScreen from "./screens/FutureInsightsScreen";
 import AdminAlertScreen from "./screens/AdminAlertScreen";
 import ManageAlertsScreen from "./screens/ManageAlertsScreen";
+import AdminComplaintsList from "./screens/AdminComplaintsList";
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -79,6 +81,14 @@ export default function App() {
             <Stack.Screen name="FutureInsights" component={FutureInsightsScreen} />
             <Stack.Screen name="AdminAlert" component={AdminAlertScreen} />
             <Stack.Screen name="ManageAlerts" component={ManageAlertsScreen} />
+            
+
+            <Stack.Screen
+              name="AdminComplaintsList"
+              component={AdminComplaintsList}
+              options={{ title: "Complaints List" }}
+            />
+
 
           </Stack.Navigator>
         </NavigationContainer>
@@ -86,3 +96,7 @@ export default function App() {
     </SafeAreaProvider>
   );
 }
+
+
+
+
