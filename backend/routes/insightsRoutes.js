@@ -323,4 +323,67 @@ router.get('/future-ward-predictions', async (req, res) => {
 });
 
 
+// --------------------------------------
+// FUTURE PREDICTIONS (ML Integration)
+// --------------------------------------
+const { getPredictedCounts, getPredictedZones, getTopComplaints } = require('../utils/mlClient');
+
+// Combined future insights from ML microservice
+// router.get('/future-predictions', async (req, res) => {
+//   try {
+//     const { location } = req.query;
+
+//     console.log('🔍 Fetching ML predictions for location:', location);
+
+//     // Fetch from ML service
+//     const [counts, zones, topComplaints] = await Promise.all([
+//       getPredictedCounts(location),
+//       getPredictedZones(location),
+//       getTopComplaints(location),
+//     ]);
+
+//     res.json({
+//       location: location || 'All',
+//       counts,
+//       zones,
+//       topComplaints,
+//       generatedAt: new Date().toISOString(),
+//     });
+//   } catch (err) {
+//     console.error('❌ Error fetching ML predictions:', err.message);
+//     res.status(500).json({ error: 'Failed to fetch ML predictions', reason: err.message });
+//   }
+// });
+
+router.get('/future-predictions', async (req, res) => {
+  try {
+    const { location } = req.query;
+
+    console.log('🔍 Fetching ML predictions for location:', location);
+
+    // Fetch predictions from ML microservice
+    const [counts, zones, topComplaints, wardTopComplaints] = await Promise.all([
+      getPredictedCounts(location),
+      getPredictedZones(location),
+      getTopComplaints(location),
+      // 👇 Fetch the ward-level top complaints
+      fetch(`http://127.0.0.1:8001/top-complaints-by-ward?location=${location || ''}`).then(res => res.json())
+    ]);
+
+    res.json({
+      location: location || 'All',
+      counts,
+      zones,
+      topComplaints,
+      wardTopComplaints,  // ✅ Add this
+      generatedAt: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error('❌ Error fetching ML predictions:', err.message);
+    res.status(500).json({ error: 'Failed to fetch ML predictions', reason: err.message });
+  }
+});
+
+
+
 module.exports = router;
